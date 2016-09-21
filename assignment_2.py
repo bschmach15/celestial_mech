@@ -1,13 +1,31 @@
+import math
 from Anomalies import Anomalies
 from Planets import Planets
 import constants as c
 import scipy.constants as spc
+import numpy as np
 
 def semimajor_eccentricity(ha, hp, planet):
     ra, rp = planet._radius + ha, planet._radius + ha
     semimajor_axis = (ra + rp)/2.
     eccentricity = (ra - rp)/(ra + rp)
     return semimajor_axis, eccentricity
+
+def period_from_a(a, planet):
+    period = 2. * spc.pi * math.sqrt(a**3/(planet._mass* spc.gravitational_constant))
+    return period
+
+def problem_4():
+    r = np.array([-5650.0,-2650.0,2850.0])
+    v = np.array([2.415,-7.032,-1.796])
+    h = np.cross(r,v)
+    mu = spc.gravitational_constant * Earth._mass
+    eccentricity = np.linalg.norm(((np.linalg.norm(v)**2 - mu/np.linalg.norm(r)) * r - (np.dot(r,v)) * v)/(mu))
+    specific_energy = 0.5 * np.linalg.norm(v)**2 - mu/np.linalg.norm(r)
+    semimajor_axis = -(mu/(2. * specific_energy))
+    inclination = math.degrees(math.acos(h[2]/np.linalg.norm(h)))
+    fpa = math.degrees(math.acos(np.dot(r,v)/(np.linalg.norm(r) * np.linalg.norm(v)))) - 90.
+    return h, specific_energy, eccentricity, semimajor_axis, inclination, fpa
 
 
 if __name__ == "__main__":
@@ -64,3 +82,24 @@ if __name__ == "__main__":
     time_to_deploy = p2_anomaly_initial.time_past_periapse + 65.
     p2_anomaly_final = Anomalies(ecc2, sa, Earth, time_past_periapse=time_to_deploy)
     print("The true anomaly at the time of deployment is " + str(p2_anomaly_final.true_anomaly))
+
+    print("Problem 3:")
+    ha_3_1, hp_3_1 = 817., 789.
+    ha_3_2, hp_3_2 = 814., 794.
+    sa_3_1, ecc_3_1 = semimajor_eccentricity(ha_3_1,hp_3_1, Earth)
+    sa_3_2, ecc_3_2 = semimajor_eccentricity(ha_3_2, hp_3_2, Earth)
+    period_1 = period_from_a(sa_3_1, Earth)
+    period_2 = period_from_a(sa_3_2, Earth)
+    print("The error in the semi-major axis is: " +str(abs(sa_3_2 - sa_3_1)) + " km")
+    print("The error in the eccentricity is: " +str(abs(ecc_3_2 - ecc_3_1)))
+    print("The error in the periods is: " +str(abs(period_2 - period_1)))
+
+    print("Problem 4:")
+    h, specific_energy, eccentricity, semimajor_axis, inclination, fpa = problem_4()
+    print("L = :")
+    print(h)
+    print("specific energy: " + str(specific_energy))
+    print("eccentricity: " + str(eccentricity))
+    print("semimajor axis: " + str(semimajor_axis))
+    print("inclination: " + str(inclination))
+    print("flight path angle: " + str(fpa))

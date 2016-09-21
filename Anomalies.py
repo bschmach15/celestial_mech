@@ -13,7 +13,7 @@ class Anomalies:
         self.eccentric_anomaly = eccentric_anomaly
         self.time_past_periapse = time_past_periapse
         if self.planet is not None:
-            self.mean_motion = math.sqrt(spc.G * planet._radius/(self.semimajor_axis**3))
+            self.mean_motion = math.sqrt(spc.gravitational_constant * planet._mass/(self.semimajor_axis**3))
         self.main()
 
     def sec_to_min(self):
