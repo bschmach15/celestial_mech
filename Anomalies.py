@@ -3,7 +3,7 @@ import scipy.constants as spc
 
 class Anomalies:
 
-    def __init__(self, eccentricity, semimajor_axis, planet = None, true_anomaly = None, mean_anomaly= None,
+    def __init__(self, eccentricity, semimajor_axis = None, planet = None, true_anomaly = None, mean_anomaly= None,
                  eccentric_anomaly = None, time_past_periapse = None):
         self.planet = planet
         self.eccentricity = eccentricity
@@ -63,16 +63,20 @@ class Anomalies:
         if self.true_anomaly is not None:
             self.true_to_eccentric()
             self.eccentric_to_mean()
-            self.mean_to_tpp()
+            # self.mean_to_tpp()
         elif self.eccentric_anomaly is not None:
             self.eccentric_to_true()
             self.eccentric_to_mean()
-            self.mean_to_tpp()
+            # self.mean_to_tpp()
         elif self.mean_anomaly is not None:
             self.mean_to_eccentric()
             self.eccentric_to_true()
-            self.mean_to_tpp()
+            # self.mean_to_tpp()
         elif self.time_past_periapse is not None:
             self.tpp_to_mean()
             self.mean_to_eccentric()
             self.eccentric_to_true()
+
+if __name__ == "__main__":
+    Anomalies_Test = Anomalies(eccentricity= 0.4, mean_anomaly=235.4)
+    print(math.radians(Anomalies_Test.eccentric_anomaly))
