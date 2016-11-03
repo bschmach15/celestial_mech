@@ -1,5 +1,4 @@
 import math
-
 from Anomalies import Anomalies
 import numpy as np
 import constants
