@@ -18,8 +18,9 @@ class Orbital_Elements:
         self.right_ascension = right_ascension
         self.perigee = perigee
         self.true_anomaly = true_anomaly
+        self.anomalies = None
         self.Earth = Planets("Earth", constants.earth_mass, constants.earth_radius)
-        self.mu = 398600.4418 # scipy.constants.gravitational_constant * self.Earth._mass off by orders of mag
+        self.mu = 398600.4415 # scipy.constants.gravitational_constant * self.Earth._mass off by orders of mag
         self.semi_major_axis = None
 
 
@@ -72,12 +73,14 @@ class Orbital_Elements:
 
 
     def print_orb_elem(self):
-        print("p = "  + str(self.semi_parameter))
-        print("e = " + str(self.eccentricity))
-        print("i = " + str(self.inclination))
-        print("Omega = " + str(self.right_ascension))
-        print("omega = " + str(self.perigee))
-        print("nu = " + str(self.true_anomaly))
+        print("semi_parameter = "  + str(self.semi_parameter))
+        print("eccentricity = " + str(self.eccentricity))
+        print("inclincation = " + str(self.inclination))
+        print("Omega (right ascension) = " + str(self.right_ascension))
+        print("omega (perigee) = " + str(self.perigee))
+        print("nu (true anomaly) = " + str(self.true_anomaly))
+        if self.semi_major_axis is not None:
+            print("semi-major axis = " + str(self.semi_major_axis))
 
     def print_pos_vel(self):
         print("position = " + str(self.position))
@@ -85,10 +88,20 @@ class Orbital_Elements:
 
     def calc_anomalies(self, mean_anomaly = None):
         if self.true_anomaly is not None:
-            self.anomalies = Anomalies(self.eccentricity, self.semi_major_axis, true_anomaly = self.true_anomaly)
+            self.anomalies = Anomalies(self.eccentricity, self.semi_major_axis, true_anomaly = self.true_anomaly,
+                                       mean_motion= math.sqrt(self.mu/self.semi_major_axis ** 3))
         else:
-            self.anomalies = Anomalies(self.eccentricity, self.semi_major_axis, mean_anomaly = mean_anomaly)
-            self.true_anomaly = self.anomalies
+            self.anomalies = Anomalies(self.eccentricity, self.semi_major_axis, mean_anomaly = mean_anomaly,
+                                       mean_motion= math.sqrt(self.mu/self.semi_major_axis ** 3))
+            self.true_anomaly = self.anomalies.true_anomaly
+
+    def advance_time(self,delta_t):
+        if self.anomalies is None:
+            self.calc_anomalies()
+        self.anomalies.mean_anomaly += self.anomalies.mean_motion * delta_t
+        while self.anomalies.mean_anomaly > 360:
+            self.anomalies.mean_anomaly = self.anomalies.mean_anomaly - 360
+
 
 if __name__ == "__main__":
     position = np.array([6524.834,6862.875,6448.296])

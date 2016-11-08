@@ -1,4 +1,4 @@
-
+import constants
 
 class Planets:
     """Name Should be passed as a string
@@ -12,3 +12,5 @@ class Planets:
 
     def get_radius(self):
         return self._radius
+
+Earth = Planets("Earth", constants.earth_mass, constants.earth_radius)

@@ -4,7 +4,7 @@ import scipy.constants as spc
 class Anomalies:
 
     def __init__(self, eccentricity, semimajor_axis = None, planet = None, true_anomaly = None, mean_anomaly= None,
-                 eccentric_anomaly = None, time_past_periapse = None):
+                 eccentric_anomaly = None, time_past_periapse = None, mean_motion = None):
         self.planet = planet
         self.eccentricity = eccentricity
         self.semimajor_axis = semimajor_axis
@@ -12,8 +12,9 @@ class Anomalies:
         self.mean_anomaly = mean_anomaly
         self.eccentric_anomaly = eccentric_anomaly
         self.time_past_periapse = time_past_periapse
-        if self.planet is not None:
-            self.mean_motion = math.sqrt(spc.gravitational_constant * planet._mass/(self.semimajor_axis**3))
+        self.mean_motion = mean_motion
+        # if self.planet is not None and self.semimajor_axis is not None:
+        #     self.mean_motion = math.sqrt(spc.gravitational_constant * planet._mass/(self.semimajor_axis**3))
         self.main()
 
     def sec_to_min(self):
